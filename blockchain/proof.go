@@ -80,7 +80,7 @@ func ToHex(num int64) []byte {
 }
 
 // basically the entire proof of work algorithm
-func (pow *ProofOfWork) run() (int, []byte) {
+func (pow *ProofOfWork) Run() (int, []byte) {
 
 	/*
 	* In this function we will:
@@ -95,12 +95,11 @@ func (pow *ProofOfWork) run() (int, []byte) {
 
 	nonce := 0
 
-	for nonce <= math.MaxInt64 {
+	for nonce < math.MaxInt64 {
 		data := pow.InitData(nonce) // prepare data
-		hash := sha256.Sum256(data) // hash to sha256
+		hash = sha256.Sum256(data)  // hash to sha256
 
-		fmt.Println("\r%x", hash) // just to see the process :)
-
+		fmt.Printf("\r%x", hash)  // just to see the process :)
 		intHash.SetBytes(hash[:]) // convert to big int
 
 		if intHash.Cmp(pow.Target) == -1 {
@@ -109,6 +108,7 @@ func (pow *ProofOfWork) run() (int, []byte) {
 		} else {
 			nonce++
 		}
+
 	}
 	fmt.Println() // just to have a lil gap
 
