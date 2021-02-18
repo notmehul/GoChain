@@ -1,8 +1,10 @@
 package blockchain
 
-type BlockChain struct {
-	Blocks []*Block
-}
+import (
+	"bytes"
+	"encoding/gob"
+	"log"
+)
 
 type Block struct {
 	Hash     []byte
@@ -38,19 +40,39 @@ func CreateBlock(data string, prevHash []byte) *Block {
 	return block
 }
 
-// adding the block to the chain
-func (chain *BlockChain) AddBlock(data string) {
-	prevBlock := chain.Blocks[len(chain.Blocks)-1] // determines previous block in the chain
-	new := CreateBlock(data, prevBlock.Hash)       // creates the new block using the old one for hash
-	chain.Blocks = append(chain.Blocks, new)       // appends :)
-}
-
 // adds the first block to the chain :3
 func Init() *Block {
 	return CreateBlock("INIT", []byte{})
 }
 
-// the madlad which started everything
-func InitBlockChain() *BlockChain {
-	return &BlockChain{[]*Block{Init()}}
+// we need this function to transfer things to the badgerDB
+func (b *Block) Serialize() []byte {
+	var res bytes.Buffer
+	encoder := gob.NewEncoder(&res)
+	//
+
+	err := encoder.Encode(b)
+
+	Handle(err)
+
+	return res.Bytes()
+}
+
+// this is for getting things bacc from the db
+func (b *Block) Deserialize(data []byte) *Block {
+	var block Block
+
+	decoder := gob.NewDecoder(bytes.NewReader(data))
+
+	err := decoder.Decode(&block)
+
+	Handle(err)
+
+	return &block
+}
+
+func Handle(err error) {
+	if err != nil {
+		log.Panic(err)
+	}
 }
