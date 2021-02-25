@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	dbPath = "./tmp/blocks"
+	dbPath = "./tmp/block"
 )
 
 type BlockChain struct {
@@ -51,8 +51,8 @@ func InitBlockChain() *BlockChain {
 		} else { // is blockchain already exists
 			item, err := txn.Get([]byte("lh")) // this returns a pointer to the LastHash in the DB :3
 			Handle(err)
-			lastHash, err := item.Value() // got dem valuez
-			return lastHash
+			lastHash, err = item.Value() // got dem valuez
+			return err
 		}
 	})
 	Handle(err) // handling any error that maybe got passed by the anon func
